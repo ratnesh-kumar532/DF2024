@@ -1,0 +1,132 @@
+{
+	"$schema": "http://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+	"contentVersion": "1.0.0.0",
+	"parameters": {
+		"factoryName": {
+			"type": "string",
+			"metadata": "Data Factory name",
+			"defaultValue": "dfoctober2024"
+		},
+		"LS_AzureDataLakeStorage_accountKey": {
+			"type": "secureString",
+			"metadata": "Secure string for 'accountKey' of 'LS_AzureDataLakeStorage'"
+		},
+		"LS_SQL_rkDemo_scmDB_password": {
+			"type": "secureString",
+			"metadata": "Secure string for 'password' of 'LS_SQL_rkDemo_scmDB'"
+		},
+		"LS_SQL_rkdemo_mastercardDB_password": {
+			"type": "secureString",
+			"metadata": "Secure string for 'password' of 'LS_SQL_rkdemo_mastercardDB'"
+		},
+		"LS_AzureDataLakeStorage_properties_typeProperties_url": {
+			"type": "string",
+			"defaultValue": "https://rkstorage23.dfs.core.windows.net/"
+		},
+		"LS_SQL_rkDemo_scmDB_properties_typeProperties_server": {
+			"type": "string",
+			"defaultValue": "masterdb01.database.windows.net"
+		},
+		"LS_SQL_rkDemo_scmDB_properties_typeProperties_database": {
+			"type": "string",
+			"defaultValue": "scmdb"
+		},
+		"LS_SQL_rkDemo_scmDB_properties_typeProperties_userName": {
+			"type": "string",
+			"defaultValue": "sqladmin"
+		},
+		"LS_SQL_rkdemo_mastercardDB_properties_typeProperties_server": {
+			"type": "string",
+			"defaultValue": "masterdb01.database.windows.net"
+		},
+		"LS_SQL_rkdemo_mastercardDB_properties_typeProperties_database": {
+			"type": "string",
+			"defaultValue": "rkdemo"
+		},
+		"LS_SQL_rkdemo_mastercardDB_properties_typeProperties_userName": {
+			"type": "string",
+			"defaultValue": "sqladmin"
+		},
+		"containerUri": {
+			"type": "string",
+			"metadata": "URI to storage account containing linked ARM templates"
+		},
+		"containerSasToken": {
+			"type": "string",
+			"metadata": "Sas token to storage account containing linked ARM templates"
+		}
+	},
+	"variables": {
+		"factoryId": "[concat('Microsoft.DataFactory/factories/', parameters('factoryName'))]"
+	},
+	"resources": [
+		{
+			"name": "dfoctober2024_ArmTemplate_0",
+			"type": "Microsoft.Resources/deployments",
+			"apiVersion": "2024-03-01",
+			"properties": {
+				"mode": "incremental",
+				"templateLink": {
+					"uri": "[concat(parameters('containerUri'), '/ArmTemplate_0.json', parameters('containerSasToken'))]",
+					"contentVersion": "1.0.0.0"
+				},
+				"parameters": {
+					"factoryName": {
+						"value": "[parameters('factoryName')]"
+					},
+					"LS_AzureDataLakeStorage_accountKey": {
+						"value": "[parameters('LS_AzureDataLakeStorage_accountKey')]"
+					},
+					"LS_SQL_rkDemo_scmDB_password": {
+						"value": "[parameters('LS_SQL_rkDemo_scmDB_password')]"
+					},
+					"LS_SQL_rkdemo_mastercardDB_password": {
+						"value": "[parameters('LS_SQL_rkdemo_mastercardDB_password')]"
+					},
+					"LS_AzureDataLakeStorage_properties_typeProperties_url": {
+						"value": "[parameters('LS_AzureDataLakeStorage_properties_typeProperties_url')]"
+					},
+					"LS_SQL_rkDemo_scmDB_properties_typeProperties_server": {
+						"value": "[parameters('LS_SQL_rkDemo_scmDB_properties_typeProperties_server')]"
+					},
+					"LS_SQL_rkDemo_scmDB_properties_typeProperties_database": {
+						"value": "[parameters('LS_SQL_rkDemo_scmDB_properties_typeProperties_database')]"
+					},
+					"LS_SQL_rkDemo_scmDB_properties_typeProperties_userName": {
+						"value": "[parameters('LS_SQL_rkDemo_scmDB_properties_typeProperties_userName')]"
+					},
+					"LS_SQL_rkdemo_mastercardDB_properties_typeProperties_server": {
+						"value": "[parameters('LS_SQL_rkdemo_mastercardDB_properties_typeProperties_server')]"
+					},
+					"LS_SQL_rkdemo_mastercardDB_properties_typeProperties_database": {
+						"value": "[parameters('LS_SQL_rkdemo_mastercardDB_properties_typeProperties_database')]"
+					},
+					"LS_SQL_rkdemo_mastercardDB_properties_typeProperties_userName": {
+						"value": "[parameters('LS_SQL_rkdemo_mastercardDB_properties_typeProperties_userName')]"
+					}
+				}
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "dfoctober2024_ArmTemplate_1",
+			"type": "Microsoft.Resources/deployments",
+			"apiVersion": "2024-03-01",
+			"properties": {
+				"mode": "incremental",
+				"templateLink": {
+					"uri": "[concat(parameters('containerUri'), '/ArmTemplate_1.json', parameters('containerSasToken'))]",
+					"contentVersion": "1.0.0.0"
+				},
+				"parameters": {
+					"factoryName": {
+						"value": "[parameters('factoryName')]"
+					}
+				}
+			},
+			"dependsOn": [
+				"[resourceId('Microsoft.Resources/deployments', 'dfoctober2024_ArmTemplate_0')]"
+			]
+		}
+	]
+}
