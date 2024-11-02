@@ -1,6 +1,7 @@
 {
 	"name": "PL_incremental_copy__dynamic_table",
 	"properties": {
+		"description": "this pipeline load data incrementally",
 		"activities": [
 			{
 				"name": "LKP_old_watermarkvalue",

@@ -1,6 +1,7 @@
 {
 	"name": "PL_Main_incrementalExcution",
 	"properties": {
+		"description": "this pipeline load data incrementally",
 		"activities": [
 			{
 				"name": "LKP_Configuration_tab",
