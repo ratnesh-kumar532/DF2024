@@ -1,0 +1,45 @@
+{
+	"name": "DS_OLTP_Customer",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "LS_AzureDataLakeStorage",
+			"type": "LinkedServiceReference"
+		},
+		"folder": {
+			"name": "OLTP"
+		},
+		"annotations": [],
+		"type": "DelimitedText",
+		"typeProperties": {
+			"location": {
+				"type": "AzureBlobFSLocation",
+				"fileName": "Customer.txt",
+				"folderPath": "OLTP",
+				"fileSystem": "dataengineering"
+			},
+			"columnDelimiter": ",",
+			"escapeChar": "\\",
+			"firstRowAsHeader": true,
+			"quoteChar": "\""
+		},
+		"schema": [
+			{
+				"name": "CustomerCode",
+				"type": "String"
+			},
+			{
+				"name": " CustomerName",
+				"type": "String"
+			},
+			{
+				"name": " Address",
+				"type": "String"
+			},
+			{
+				"name": " PhoneNumber",
+				"type": "String"
+			}
+		]
+	},
+	"type": "Microsoft.DataFactory/factories/datasets"
+}

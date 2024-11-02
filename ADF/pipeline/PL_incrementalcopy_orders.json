@@ -1,0 +1,167 @@
+{
+	"name": "PL_incrementalcopy_orders",
+	"properties": {
+		"activities": [
+			{
+				"name": "LKP_old_watermarkvalue",
+				"type": "Lookup",
+				"dependsOn": [],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"source": {
+						"type": "AzureSqlSource",
+						"sqlReaderQuery": "select tablename,watermarkvalue as oldwatermarkvalue from dbo.watermarktable\nwhere tablename='orders'",
+						"queryTimeout": "02:00:00",
+						"partitionOption": "None"
+					},
+					"dataset": {
+						"referenceName": "DS_SQL_scmdb_watermark",
+						"type": "DatasetReference"
+					}
+				}
+			},
+			{
+				"name": "LKP_new_watermakvalue",
+				"type": "Lookup",
+				"dependsOn": [],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"source": {
+						"type": "AzureSqlSource",
+						"sqlReaderQuery": "select MAX(insertdatetime) as newwatermarkvalue from [dbo].[orders]",
+						"queryTimeout": "02:00:00",
+						"partitionOption": "None"
+					},
+					"dataset": {
+						"referenceName": "DS_SQL_rkdemo_order",
+						"type": "DatasetReference"
+					}
+				}
+			},
+			{
+				"name": "Copy data orders",
+				"type": "Copy",
+				"dependsOn": [
+					{
+						"activity": "LKP_old_watermarkvalue",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					},
+					{
+						"activity": "LKP_new_watermakvalue",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"source": {
+						"type": "AzureSqlSource",
+						"sqlReaderQuery": {
+							"value": "select * from [dbo].[orders] where insertdatetime > '@{activity('LKP_old_watermarkvalue').output.firstRow.oldwatermarkvalue}' and insertdatetime <= '@{activity('LKP_new_watermakvalue').output.firstRow.newwatermarkvalue}'",
+							"type": "Expression"
+						},
+						"queryTimeout": "02:00:00",
+						"partitionOption": "None"
+					},
+					"sink": {
+						"type": "AzureSqlSink",
+						"writeBehavior": "insert",
+						"sqlWriterUseTableLock": false,
+						"disableMetricsCollection": false
+					},
+					"enableStaging": false,
+					"translator": {
+						"type": "TabularTranslator",
+						"typeConversion": true,
+						"typeConversionSettings": {
+							"allowDataTruncation": true,
+							"treatBooleanAsNumber": false
+						}
+					}
+				},
+				"inputs": [
+					{
+						"referenceName": "DS_SQL_rkdemo_order",
+						"type": "DatasetReference"
+					}
+				],
+				"outputs": [
+					{
+						"referenceName": "DS_SQL_scmDB_order",
+						"type": "DatasetReference"
+					}
+				]
+			},
+			{
+				"name": "update_watermakvalue",
+				"type": "SqlServerStoredProcedure",
+				"dependsOn": [
+					{
+						"activity": "Copy data orders",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"storedProcedureName": "[dbo].[spSetWatermark]",
+					"storedProcedureParameters": {
+						"NewTime": {
+							"value": {
+								"value": "@activity('LKP_new_watermakvalue').output.firstRow.newwatermarkvalue",
+								"type": "Expression"
+							},
+							"type": "DateTime"
+						},
+						"TableName": {
+							"value": {
+								"value": "@activity('LKP_old_watermarkvalue').output.firstRow.tablename",
+								"type": "Expression"
+							},
+							"type": "String"
+						}
+					}
+				},
+				"linkedServiceName": {
+					"referenceName": "LS_SQL_rkDemo_scmDB",
+					"type": "LinkedServiceReference"
+				}
+			}
+		],
+		"annotations": [],
+		"lastPublishTime": "2024-10-20T11:27:02Z"
+	},
+	"type": "Microsoft.DataFactory/factories/pipelines"
+}

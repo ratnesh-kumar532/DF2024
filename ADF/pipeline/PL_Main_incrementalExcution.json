@@ -1,0 +1,83 @@
+{
+	"name": "PL_Main_incrementalExcution",
+	"properties": {
+		"activities": [
+			{
+				"name": "LKP_Configuration_tab",
+				"type": "Lookup",
+				"dependsOn": [],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"source": {
+						"type": "AzureSqlSource",
+						"sqlReaderQuery": "select * from ConfigurationTable",
+						"queryTimeout": "02:00:00",
+						"partitionOption": "None"
+					},
+					"dataset": {
+						"referenceName": "DS_SQL_scmDB_order",
+						"type": "DatasetReference"
+					},
+					"firstRowOnly": false
+				}
+			},
+			{
+				"name": "ForEach1",
+				"type": "ForEach",
+				"dependsOn": [
+					{
+						"activity": "LKP_Configuration_tab",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"userProperties": [],
+				"typeProperties": {
+					"items": {
+						"value": "@activity('LKP_Configuration_tab').output.value",
+						"type": "Expression"
+					},
+					"activities": [
+						{
+							"name": "Execute incrementalcopy_dynamic",
+							"type": "ExecutePipeline",
+							"dependsOn": [],
+							"policy": {
+								"secureInput": false
+							},
+							"userProperties": [],
+							"typeProperties": {
+								"pipeline": {
+									"referenceName": "PL_incremental_copy__dynamic_table",
+									"type": "PipelineReference"
+								},
+								"waitOnCompletion": true,
+								"parameters": {
+									"TableName": {
+										"value": "@item().TableName",
+										"type": "Expression"
+									},
+									"WaterMarkColumnName": {
+										"value": "@item().WaterMarkColumn",
+										"type": "Expression"
+									}
+								}
+							}
+						}
+					]
+				}
+			}
+		],
+		"annotations": [],
+		"lastPublishTime": "2024-11-01T08:31:55Z"
+	},
+	"type": "Microsoft.DataFactory/factories/pipelines"
+}
