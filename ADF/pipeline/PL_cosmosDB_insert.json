@@ -24,7 +24,66 @@
 						"type": "CosmosDbSqlApiSink",
 						"writeBehavior": "insert"
 					},
-					"enableStaging": false
+					"enableStaging": false,
+					"translator": {
+						"type": "TabularTranslator",
+						"mappings": [
+							{
+								"source": {
+									"name": "OrderID",
+									"type": "int"
+								},
+								"sink": {
+									"path": "$['Column_1']"
+								}
+							},
+							{
+								"source": {
+									"name": "ProductID",
+									"type": "varchar"
+								},
+								"sink": {
+									"path": "$['Column_2']"
+								}
+							},
+							{
+								"source": {
+									"name": "CustomerID",
+									"type": "varchar"
+								},
+								"sink": {
+									"path": "$['Column_3']"
+								}
+							},
+							{
+								"source": {
+									"name": "UnitPrice",
+									"type": "decimal"
+								},
+								"sink": {
+									"path": "$['Column_4']"
+								}
+							},
+							{
+								"source": {
+									"name": "Quantity",
+									"type": "int"
+								},
+								"sink": {
+									"path": "$['Column_5']"
+								}
+							},
+							{
+								"source": {
+									"name": "InsertDateTime",
+									"type": "datetime"
+								},
+								"sink": {
+									"path": "$['Column_6']"
+								}
+							}
+						]
+					}
 				},
 				"inputs": [
 					{
