@@ -34,7 +34,7 @@
 									"type": "int"
 								},
 								"sink": {
-									"path": "$['Column_1']"
+									"path": "$['OrderID']"
 								}
 							},
 							{
@@ -43,7 +43,7 @@
 									"type": "varchar"
 								},
 								"sink": {
-									"path": "$['Column_2']"
+									"path": "$['ProductID']"
 								}
 							},
 							{
@@ -52,7 +52,7 @@
 									"type": "varchar"
 								},
 								"sink": {
-									"path": "$['Column_3']"
+									"path": "$['CustomerID']"
 								}
 							},
 							{
@@ -61,7 +61,7 @@
 									"type": "decimal"
 								},
 								"sink": {
-									"path": "$['Column_4']"
+									"path": "$['UnitPrice']"
 								}
 							},
 							{
@@ -70,7 +70,7 @@
 									"type": "int"
 								},
 								"sink": {
-									"path": "$['Column_5']"
+									"path": "$['Quantity']"
 								}
 							},
 							{
@@ -79,7 +79,7 @@
 									"type": "datetime"
 								},
 								"sink": {
-									"path": "$['Column_6']"
+									"path": "$['InsertDateTime']"
 								}
 							}
 						]
