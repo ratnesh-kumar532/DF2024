@@ -1,0 +1,39 @@
+{
+	"name": "Pl_callNoteBook",
+	"properties": {
+		"activities": [
+			{
+				"name": "productSales",
+				"type": "DatabricksNotebook",
+				"dependsOn": [],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"notebookPath": "/Shared/20241106/databricks processing",
+					"baseParameters": {
+						"date": {
+							"value": "@pipeline().parameters.datefolder",
+							"type": "Expression"
+						}
+					}
+				},
+				"linkedServiceName": {
+					"referenceName": "LS_AzureDatabricks",
+					"type": "LinkedServiceReference"
+				}
+			}
+		],
+		"parameters": {
+			"datefolder": {
+				"type": "string"
+			}
+		},
+		"annotations": []
+	}
+}
